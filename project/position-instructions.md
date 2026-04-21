@@ -105,9 +105,3 @@ Before submitting, verify that your implementation satisfies all of the followin
 - [ ] `p1 + p2`, `p1 - p2`, `p * 2.0`, `2.0 * p`, `p / 2.0` all produce correct results.
 - [ ] Unary `-p` negates both components.
 - [ ] `std::cout << Position(1, 2)` prints `(1,2)`.
-
----
-
-## Submission
-
-Submit the completed `position.h` file. Do not add extra headers, change the class layout, or split the implementation into a `.cpp` file — everything must remain in the single header.
