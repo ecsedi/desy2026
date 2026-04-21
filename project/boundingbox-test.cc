@@ -2,7 +2,7 @@
 #include <iostream>
 
 int main() {
-  BoundingBox bb;
+  BoundingBox bb{{0,0},{1,1},{0,1},{1,0}};
   for (int i = 0; i < 10; ++i) {
     std::cout << bb << std::endl;
     if (i%2) {

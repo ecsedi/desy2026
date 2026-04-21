@@ -9,9 +9,6 @@
 #include <stdexcept>
 #include <initializer_list>
 
-class BoundingBox;
-std::ostream & operator << (std::ostream &, const BoundingBox &);
-
 /**
  * @brief Describes a 2D screen resolution in pixels.
  * TODO: Define two public unsigned long members: `width` and `height`.
@@ -69,10 +66,8 @@ public:
    * @brief Construct as the bounding box of an initializer_list of positions.
    * @param poslist List of positions to enclose.
    *                An empty list yields an empty bounding box.
-   * TODO: If poslist is empty set is_empty = true.
-   *       Otherwise set is_empty = false, seed both corners from the first
-   *       element (use poslist.begin() — initializer_list has no operator[]),
-   *       then iterate and expand with std::min / std::max.
+   * TODO: Initialize is_empty to true. The create a loop and use += to add
+   *       positions to this object.
    */
   // TODO
 
@@ -80,8 +75,8 @@ public:
    * @brief Construct as the bounding box of a vector of positions.
    * @param poslist Vector of positions to enclose.
    *                An empty vector yields an empty bounding box.
-   * TODO: Same logic as the initializer_list constructor above;
-   *       here poslist[0] may be used to access the first element.
+   * TODO: Initialize is_empty to true. The create a loop and use += to add
+   *       positions to this object.
    */
   // TODO
 

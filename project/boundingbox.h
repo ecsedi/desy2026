@@ -9,9 +9,6 @@
 #include <stdexcept>
 #include <initializer_list>
 
-class BoundingBox;
-std::ostream & operator << (std::ostream &, const BoundingBox &);
-
 /**
  * @brief Describes a 2D screen resolution in pixels.
  */
@@ -71,7 +68,7 @@ public:
    *                An empty list yields an empty bounding box.
    */
   BoundingBox(std::initializer_list<Position> poslist) : is_empty(true) {
-    for (auto pos : poslist) {
+    for (auto & pos : poslist) {
       *this += pos;
     }
   }
