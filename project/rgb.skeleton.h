@@ -52,9 +52,6 @@ public:
   /** @brief Predefined magenta color (255,0,255). */
   static const RGB magenta;
 
-  /** @brief Static map containing supported named colors. */
-  static ColorMap colorMap;
-
   /**
    * @brief Default constructor.
    *
