@@ -20,12 +20,14 @@ private:
 
 public:
 
-  LIFO() = delete;
+  LIFO() : store_size(0), store_capacity(0), store(nullptr) {
+  }
 
   explicit LIFO(size_type capacity)
   : store_size(0), store_capacity(capacity), store(new value_type [capacity]) {
   }
 
+  // copy constructor
   LIFO(const LIFO & other)
   :
   store_size(other.store_size),
@@ -35,6 +37,17 @@ public:
     //  store[i] = other.store[i];
     //}
     std::copy(other.store, other.store+other.store_size, store);
+  }
+
+  // move constructor
+  LIFO(LIFO && other)
+  :
+  store_size(other.store_size),
+  store_capacity(other.store_capacity),
+  store(other.store) {
+    other.store_size     = 0;
+    other.store_capacity = 0;
+    other.store          = nullptr;
   }
 
   ~LIFO() {
@@ -52,6 +65,20 @@ public:
     }
     store_size = other.store_size;
     std::copy(other.store, other.store+other.store_size, store);
+    return *this;
+  }
+
+  LIFO & operator = (LIFO && other) {
+    if (this == &other) {
+      return *this;
+    }
+    delete [] store;
+    store_size     = other.store_size;
+    store_capacity = other.store_capacity;
+    store          = other.store;
+    other.store_size     = 0;
+    other.store_capacity = 0;
+    other.store          = nullptr;
     return *this;
   }
 
@@ -125,6 +152,27 @@ public:
     return store + store_size;
   }
 };
+
+std::ostream & operator << (std::ostream & os, const LIFO<double> & stack) {
+  os << stack.capacity() << " " stack.size();
+  for (auto & item : stack) {
+    os << " " << item;
+  }
+  return os;
+}
+
+std::istream & operator >> (std::istream & is, LIFO<double> & stack) {
+  LIFO<double>::size_type c, s;
+  is >> c >> s;
+  LIFO<double> new_lifo(c);
+  double item;
+  for (unsigned int i = 0; i < s; ++i) {
+    is >> item;
+    new_lifo.push(item);
+  }
+  stack = std::move(new_lifo);
+  return is;
+}
 
 int main() {
   LIFO<double> stack(4);
