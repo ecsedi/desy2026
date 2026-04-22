@@ -9,6 +9,8 @@ public:
 
   typedef T      value_type;
   typedef size_t size_type;
+  typedef value_type *       iterator;
+  typedef const value_type * const_iterator;
 
 private:
 
@@ -106,6 +108,22 @@ public:
     }
     return store[offset];
   }
+
+  iterator begin() {
+    return store;
+  }
+
+  iterator end() {
+    return store + store_size;
+  }
+
+  const_iterator begin() const {
+    return store;
+  }
+
+  const_iterator end() const {
+    return store + store_size;
+  }
 };
 
 int main() {
@@ -122,6 +140,9 @@ int main() {
   }
   std::cout << "stack[3]=" << stack[3] << std::endl;
   stack[3] = 333;
+  for (auto & item : stack) {
+    std::cout << item << std::endl;
+  }
   while (!stack.empty()) {
     std::cout << stack.pop() << std::endl;
   }
