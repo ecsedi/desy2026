@@ -20,19 +20,16 @@ class Matrix {
 
 public:
 
-  // TODO: Define three public type aliases:
-  //   - `value_type`    for T
-  //   - `size_type`     for size_t
-  //   - `iterator`      for the mutable iterator of std::vector<value_type>
-  //                     (hint: typename std::vector<value_type>::iterator)
-  //   - `const_iterator` for the immutable iterator of std::vector<value_type>
+  typedef T value_type;
+  typedef size_t size_type;
+  typedef  typename std::vector<value_type>::iterator iterator;
+  typedef  typename std::vector<value_type>::const_iterator const_iterator;
 
 private:
 
-  // TODO: Declare three private member variables:
-  //   - `num_rows` of type size_type
-  //   - `num_cols` of type size_type
-  //   - `data`     of type std::vector<value_type>  (stores elements in row-major order)
+  size_type num_rows;
+  size_type num_cols;
+  std::vector<value_type> data;
 
 public:
 
@@ -44,18 +41,19 @@ public:
    * @brief Construct a matrix of given dimensions with default-initialized elements.
    * @param rows Number of rows.
    * @param cols Number of columns.
-   * TODO: Initialise num_rows, num_cols, and data (size = rows * cols).
    */
-  // TODO
+  Matrix(size_type rows, size_type cols) : num_rows(rows), num_cols(cols), data(num_rows*num_cols) {
+  }
 
   /**
    * @brief Construct a matrix filled with a constant value.
    * @param rows  Number of rows.
    * @param cols  Number of columns.
    * @param value Fill value for all elements.
-   * TODO: Initialise num_rows, num_cols, and data (all elements equal to value).
    */
-  // TODO
+  Matrix(size_type rows, size_type cols, const value_type & value)
+  : num_rows(rows), num_cols(cols), data(num_rows*num_cols, value) {
+  }
 
   /**
    * @brief Construct from an initializer list of elements in row-major order.
@@ -63,11 +61,13 @@ public:
    * @param cols   Number of columns.
    * @param values Elements in row-major order; count must equal rows * cols.
    * @throw std::invalid_argument if the number of values does not match rows * cols.
-   * TODO: Initialise num_rows, num_cols, and data from `values`.
-   *       After construction, check that data.size() == num_rows * num_cols and
-   *       throw std::invalid_argument("Bad matrix dimensions") if not.
    */
-  // TODO
+  Matrix(size_type rows, size_type cols, std::initializer_list<value_type> values) :
+  num_rows(rows), num_cols(cols), data(values) {
+    if (data.size() != num_rows*num_cols) {
+      throw std::invalid_argument("Bad matrix dimensions");
+    }
+  }
 
   // Copy/move/destructor — keep these defaulted, do not implement them manually.
   Matrix(const Matrix &) = default;
@@ -78,21 +78,24 @@ public:
 
   /**
    * @brief Return the number of rows.
-   * TODO: Return num_rows.
    */
-  // TODO
+  size_type rows() const {
+    return num_rows;
+  }
 
   /**
    * @brief Return the number of columns.
-   * TODO: Return num_cols.
    */
-  // TODO
+  size_type cols() const {
+    return num_cols;
+  }
 
   /**
    * @brief Return the total number of elements (rows * cols).
-   * TODO: Delegate to data.size().
    */
-  // TODO
+  size_type size() const {
+    return num_rows * num_cols;
+  }
 
   /**
    * @brief Non-const element access without bounds checking.
@@ -101,16 +104,19 @@ public:
    * @return Reference to the element at (row, col).
    * TODO: Compute the flat index as row * num_cols + col and return data[index].
    */
-  // TODO
+  value_type & operator () (size_type row, size_type col) {
+    return data[row * num_cols + col];
+  }
 
   /**
    * @brief Const element access without bounds checking.
    * @param row Row index.
    * @param col Column index.
    * @return Const reference to the element at (row, col).
-   * TODO: Same formula as the non-const version above.
    */
-  // TODO
+  const value_type & operator () (size_type row, size_type col) const {
+    return data[row * num_cols + col];
+  }
 
   /**
    * @brief Bounds-checked non-const element access.
@@ -118,10 +124,13 @@ public:
    * @param col Column index.
    * @return Reference to the element at (row, col).
    * @throw std::out_of_range if row >= num_rows or col >= num_cols.
-   * TODO: Check bounds first, then return data[row * num_cols + col].
-   *       Throw std::out_of_range("Matrix index out of bounds") on failure.
    */
-  // TODO
+  value_type & at(size_type row, size_type col) {
+    if (row >= num_rows || col >= num_cols) {
+      throw std::out_of_range("Invalid index");
+    }
+    return data[row * num_cols + col];
+  }
 
   /**
    * @brief Bounds-checked const element access.
@@ -129,25 +138,38 @@ public:
    * @param col Column index.
    * @return Const reference to the element at (row, col).
    * @throw std::out_of_range if row >= num_rows or col >= num_cols.
-   * TODO: Identical logic to the non-const at(), but const-qualified.
    */
-  // TODO
+  const value_type & at(size_type row, size_type col) const {
+    if (row >= num_rows || col >= num_cols) {
+      throw std::out_of_range("Invalid index");
+    }
+    return data[row * num_cols + col];
+  }
 
   /** @brief Return a mutable iterator to the first element.
-   *  TODO: Delegate to data.begin(). */
-  // TODO
+   */
+  iterator begin() {
+    return data.begin();
+  }
 
   /** @brief Return a mutable iterator past the last element.
-   *  TODO: Delegate to data.end(). */
-  // TODO
+   */
+  iterator end() {
+    return data.end();
+  }
 
   /** @brief Return a const iterator to the first element.
-   *  TODO: Delegate to data.begin() (const overload). */
-  // TODO
+   */
+  const_iterator begin() const {
+    return data.begin();
+  }
 
   /** @brief Return a const iterator past the last element.
-   *  TODO: Delegate to data.end() (const overload). */
-  // TODO
+   */
+  const_iterator end() const {
+    return data.end();
+  }
+
 };
 
 // -----------------------------------------------------------------------
@@ -172,8 +194,16 @@ public:
  *       Print a space before each element except the first in a row (if (j) os << " ").
  *       Access elements via mat(i, j).
  */
-// TODO: template <typename T>
-// TODO: inline std::ostream & operator << (std::ostream & os, const Matrix<T> & mat)
+template <typename T>
+inline std::ostream & operator << (std::ostream & os, const Matrix<T> & mat) {
+  for (typename Matrix<T>::size_type r = 0; r < mat.rows(); ++r) {
+    os << (r ? "\n" : "");
+    for (typename Matrix<T>::size_type c = 0; c < mat.cols(); ++c) {
+      os << (c ? " " : "") << mat(r,c);
+    }
+  }
+  return os;
+}
 
 /**
  * @brief Stream input operator for Matrix.
@@ -187,8 +217,11 @@ public:
  * @param mat Matrix to fill.
  * @return Reference to input stream.
  *
- * TODO: Use a range-based for loop over mat (relies on begin()/end())
- *       and read each element with is >> item.
  */
-// TODO: template <typename T>
-// TODO: inline std::istream & operator >> (std::istream & is, Matrix<T> & mat)
+template <typename T>
+inline std::istream & operator >> (std::istream & is, Matrix<T> & mat) {
+  for (auto & item : mat) {
+    is >> item;
+  }
+  return is;
+}
