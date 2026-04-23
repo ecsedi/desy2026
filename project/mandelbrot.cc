@@ -216,6 +216,9 @@ void genMandel(const MandelParams & mp) {
     }
   }
   canvas.save(mp.imagefile);
+  if (mp.imagefile != "-") {
+    std::cerr << "Saved image to " << mp.imagefile << std::endl;
+  }
 }
 
 #ifdef STANDALONE
