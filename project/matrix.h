@@ -42,7 +42,7 @@ public:
    * @param rows Number of rows.
    * @param cols Number of columns.
    */
-  Matrix(size_type rows, size_type cols) : num_rows(rows), num_cols(cols), data(num_rows*num_cols) {
+  constexpr Matrix(size_type rows, size_type cols) : num_rows(rows), num_cols(cols), data(num_rows*num_cols) {
   }
 
   /**
@@ -51,7 +51,7 @@ public:
    * @param cols  Number of columns.
    * @param value Fill value for all elements.
    */
-  Matrix(size_type rows, size_type cols, const value_type & value)
+  constexpr Matrix(size_type rows, size_type cols, const value_type & value)
   : num_rows(rows), num_cols(cols), data(num_rows*num_cols, value) {
   }
 
