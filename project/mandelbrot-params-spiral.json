@@ -1,0 +1,8 @@
+{
+  "corner1":    [-0.1530,  1.0290],
+  "corner2":    [-0.1440,  1.0380],
+  "resolution": 1000000,
+  "maxiter":    1024,
+  "palgenseed": 4152498751,
+  "imagefile":  "spiral.ppm"
+}

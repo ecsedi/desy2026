@@ -1,0 +1,8 @@
+{
+  "corner1":    [-2.5, -1.2],
+  "corner2":    [ 1.0,  1.2],
+  "resolution": 1000000,
+  "maxiter":    255,
+  "palgenseed": 1753413148,
+  "imagefile":  "full.ppm"
+}

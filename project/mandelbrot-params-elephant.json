@@ -1,0 +1,8 @@
+{
+  "corner1":    [ 0.27,  0.00],
+  "corner2":    [ 0.30,  0.03],
+  "resolution": 1000000,
+  "maxiter":    512,
+  "palgenseed": 3396189049,
+  "imagefile":  "elephant.ppm"
+}

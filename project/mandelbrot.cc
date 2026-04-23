@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 /** @brief Convenience alias for the complex number type used in iteration. */
 typedef ComplexGrid::complex complex;
@@ -77,9 +78,13 @@ struct MandelParams {
   }
 };
 
-// TODO MandelParams I/O - stream insertion and stream extraction operators
-// Hint: Just print the values of the data members separated by spaces. This way
-// it will be easy to read them back from the same format.
+std::istream & operator >> (std::istream & is, MandelParams & mp) {
+  return is >> mp.corner1 >> mp.corner2 >> mp.resolution >> mp.maxiter >> mp.palgenseed >> mp.imagefile;
+}
+
+std::ostream & operator << (std::ostream & os, const MandelParams & mp) {
+  return os << mp.corner1 << " " << mp.corner2 << " " << mp.resolution << " " << mp.maxiter << " " << mp.palgenseed << " " << mp.imagefile;
+}
 
 /**
  * @brief Generate a randomized HSV-based color palette.
@@ -181,20 +186,15 @@ Palette generateBasicPalette(int numColors) {
  */
 unsigned int mandel(const complex & c, unsigned int maxiter) {
 
-  // TODO:
-  //   Declare z = 0 (complex) and i = 0 (unsigned int).
-  //
-  //   Loop while i < maxiter+1 AND |z| < 2:
-  //     increment i
-  //     update z: z = z*z + c
-  //
-  //   Return 0 if the point did NOT escape (i > maxiter),
-  //   otherwise return i (the escape iteration count).
-  //
-  //   Note: returning 0 for in-set points lets the caller treat index 0
-  //   of the palette as the "interior" colour.
+  complex      z = 0;
+  unsigned int i = 0;
 
-  return 0; // placeholder
+  while (i <= maxiter && std::abs(z) < 2) {
+    z = z*z + c;
+    ++i;
+  }
+
+  return i > maxiter ? 0 : i;
 }
 
 /**
@@ -207,26 +207,15 @@ unsigned int mandel(const complex & c, unsigned int maxiter) {
  */
 void genMandel(const MandelParams & mp) {
 
-  // TODO:
-  //   1. Build a ComplexGrid from mp.corner1, mp.corner2, mp.resolution.
-  //
-  //   2. Create a Canvas with width = grid.width(), height = grid.height()
-  //      (leave the max RGB component at its default value of 255).
-  //
-  //   3. Generate a palette of mp.maxiter+1 colors using
-  //      generateRandomPalette(mp.maxiter+1, mp.palgenseed).
-  //
-  //   4. Iterate over every pixel in the canvas (use a range-for over canvas,
-  //      or index with n = 0, 1, …).  For each pixel:
-  //        a. Call mandel(grid[n], mp.maxiter) to get the escape count.
-  //        b. Assign palette[iter] to the pixel.
-  //        c. Advance n.
-  //
-  //   5. Call canvas.save(mp.imagefile) to write the PPM output.
-  //
-  //   6. If mp.imagefile != "-", print to stderr:
-  //        "Saved image to " << mp.imagefile
-  //      followed by std::endl.
+  ComplexGrid grid(mp.corner1, mp.corner2, mp.resolution);
+  Canvas canvas(grid.width(), grid.height());
+  auto palette = generateRandomPalette(mp.maxiter+1, mp.palgenseed);
+  for (unsigned int y = 0; y < grid.height(); ++y) {
+    for (unsigned int x = 0; x < grid.width(); ++x) {
+      canvas(x,y) = palette[mandel(grid(x,y), mp.maxiter)];
+    }
+  }
+  canvas.save(mp.imagefile);
 }
 
 #ifdef STANDALONE
@@ -250,7 +239,21 @@ int main(int argc, char ** argv) {
   std::string paramfile = argc > 1 ? argv[1] : "-";
   MandelParams mp;
 
-  // TODO: Read mp from either standard input or file. Throw if read fails.
+  if (argc > 1) {
+    if (paramfile == "-") {
+      std::cin >> mp;
+    }
+    else {
+      std::ifstream f(paramfile);
+      if (!f) {
+        throw std::runtime_error("Cannot open file " + paramfile);
+      }
+      f >> mp;
+      if (!f) {
+        throw std::runtime_error("Error reading file " + paramfile);
+      }
+    }
+  }
 
   genMandel(mp);
   return 0;

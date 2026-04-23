@@ -1,0 +1,8 @@
+{
+  "corner1":    [-0.76,  0.08],
+  "corner2":    [-0.72,  0.12],
+  "resolution": 1000000,
+  "maxiter":    512,
+  "palgenseed": 3024201808,
+  "imagefile":  "seahorse.ppm"
+}
