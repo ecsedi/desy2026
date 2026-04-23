@@ -62,37 +62,24 @@ public:
     const complex & corner1,
     const complex & corner2,
     unsigned long   resolution
-  ) :
-
-  // TODO — member initialiser list:
-  //
-  // bl: complex whose real part is min(corner1.real(), corner2.real())
-  //     and imaginary part is min(corner1.imag(), corner2.imag()).
-  //     Use std::min for both components.
-  //
-  // tr: complex whose real part is max(corner1.real(), corner2.real())
-  //     and imaginary part is max(corner1.imag(), corner2.imag()).
-  //     Use std::max for both components.
-  //
-  // res: store resolution directly.
-  //
-  // w: number of columns, computed to preserve aspect ratio:
-  //      w = sqrt( resolution * (tr.real()-bl.real()) / (tr.imag()-bl.imag()) )
-  //    Cast the result to size_type.
-  //
-  // h: number of rows, computed symmetrically:
-  //      h = sqrt( resolution * (tr.imag()-bl.imag()) / (tr.real()-bl.real()) )
-  //    Cast the result to size_type.
-  //
-  // nodes: a std::vector<complex> of size w*h (default-initialised).
-
-  bl(complex{}),   // placeholder
-  tr(complex{}),   // placeholder
-  res(0),          // placeholder
-  w(0),            // placeholder
-  h(0),            // placeholder
-  nodes()          // placeholder
-
+  )
+  :
+  bl(
+    complex{
+      std::min(corner1.real(), corner2.real()),
+      std::min(corner1.imag(), corner2.imag())
+    }
+  ),
+  tr(
+    complex{
+      std::max(corner1.real(), corner2.real()),
+      std::max(corner1.imag(), corner2.imag())
+    }
+  ),
+  res(resolution),
+  w(sqrt(resolution * (tr.real()-bl.real()) / (tr.imag()-bl.imag()))),
+  h(sqrt(resolution * (tr.imag()-bl.imag()) / (tr.real()-bl.real()))),
+  nodes(w*h)
   {
     // TODO — fill the nodes vector:
     //
@@ -102,9 +89,19 @@ public:
     //   imag part = tr.imag()       <-- note: tr, not bl
     //
     // Step sizes:
-    //   dx = (tr.real() - bl.real()) / w    (real part increases left → right)
-    //   dy = (tr.imag() - bl.imag()) / h    (imag part decreases top → bottom)
-    //
+    complex dx{(tr.real() - bl.real()) / w, 0};
+    complex dy{0, (tr.imag() - bl.imag()) / h};
+
+    complex current(bl.real(), tr.imag());
+
+    for (size_type y = 0; y < h; ++y) {
+      current.real(bl.real());
+      for (size_type x = 0; x < w; ++x) {
+        nodes[y*w+x] = current;
+        current += dx;
+      }
+      current -= dy;
+    }
     // For each row y (0 .. h-1), for each column x (0 .. w-1):
     //   nodes[w*y + x] = current complex value
     //   then advance current.real() by +dx
@@ -118,6 +115,7 @@ public:
 
   ComplexGrid(const ComplexGrid & ) = delete;
   ComplexGrid(      ComplexGrid &&) = default;
+
   ComplexGrid & operator = (const ComplexGrid & ) = delete;
   ComplexGrid & operator = (      ComplexGrid &&) = default;
 
@@ -126,8 +124,7 @@ public:
    * @return Column count.
    */
   size_type width() const {
-    // TODO: return w
-    return 0; // placeholder
+    return w;
   }
 
   /**
@@ -135,8 +132,7 @@ public:
    * @return Row count.
    */
   size_type height() const {
-    // TODO: return h
-    return 0; // placeholder
+    return h;
   }
 
   /**
@@ -144,8 +140,7 @@ public:
    * @return Bottom-left complex value.
    */
   complex bottom_left() const {
-    // TODO: return bl
-    return complex{}; // placeholder
+    return bl;
   }
 
   /**
@@ -153,8 +148,7 @@ public:
    * @return Top-right complex value.
    */
   complex top_right() const {
-    // TODO: return tr
-    return complex{}; // placeholder
+    return tr;
   }
 
   /**
@@ -162,8 +156,7 @@ public:
    * @return Approximate total node count passed to the constructor.
    */
   unsigned long resolution() const {
-    // TODO: return res
-    return 0; // placeholder
+    return res;
   }
 
   /**
@@ -171,8 +164,7 @@ public:
    * @return width() * height(), i.e. nodes.size().
    */
   size_type size() const {
-    // TODO: return nodes.size()
-    return 0; // placeholder
+    return nodes.size();
   }
 
   /**
@@ -182,9 +174,7 @@ public:
    * @return Const reference to the complex node value.
    */
   const complex & operator() (size_type x, size_type y) const {
-    // TODO: nodes are stored in row-major order; return nodes[w*y + x]
-    static complex dummy{};
-    return dummy; // placeholder
+    return nodes[w*y + x];
   }
 
   /**
@@ -193,9 +183,7 @@ public:
    * @return Const reference to the complex node value.
    */
   const complex & operator [] (size_type n) const {
-    // TODO: return nodes[n]
-    static complex dummy{};
-    return dummy; // placeholder
+    return nodes[n];
   }
 
   /**
@@ -203,8 +191,7 @@ public:
    * @return Begin iterator.
    */
   const_iterator begin() const {
-    // TODO: return nodes.begin()
-    return nodes.begin(); // placeholder (nodes is empty, so this won't crash)
+    return nodes.begin();
   }
 
   /**
@@ -212,8 +199,7 @@ public:
    * @return End iterator.
    */
   const_iterator end() const {
-    // TODO: return nodes.end()
-    return nodes.end(); // placeholder
+    return nodes.end();
   }
 };
 
@@ -229,14 +215,12 @@ public:
  */
 inline std::ostream & operator << (std::ostream & os, const ComplexGrid & grid) {
 
-  // TODO:
-  //   Iterate n from 0 to grid.size()-1.
-  //   Compute x = n % grid.width().
-  //   If n > 0 and x == 0, output "\n" (new row).
-  //   If x > 0, output " " (space between nodes in the same row).
-  //   Output grid[n].
+  for (ComplexGrid::size_type y = 0; y < grid.height(); ++y) {
+    os << (y ? "\n" : "");
+    for (ComplexGrid::size_type x = 0; x < grid.width(); ++x) {
+      os << (x ? " " : "") << grid(x,y);
+    }
+  }
 
   return os;
 }
-
-//#endif

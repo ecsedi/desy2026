@@ -12,8 +12,7 @@ The class is already declared with all member variables in place. Your task is t
 
 | File | Your role |
 |------|-----------|
-| `complexgrid.h` | **Edit this file.** Replace every `// TODO` with a correct implementation. |
-| `complexgrid-test.cpp` | Provided — do not modify. Used to verify your implementation. |
+| `complexgrid-skeleton.h` | **Edit this file.** Replace every `// TODO` with a correct implementation. 
 
 ---
 
