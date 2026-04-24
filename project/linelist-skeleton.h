@@ -32,14 +32,13 @@ public:
    * @brief Construct a list containing a single copy of @p item.
    * @param item Initial element.
    */
-  explicit LineList(const Line & item) {
-    push_back(item);
+  explicit LineList(const Line & item) : std::vector<Line>(1, item) {
   }
 
   LineList(const LineList & ) = default;
   LineList(      LineList &&) = default;
 
-  virtual ~LineList() override = default 
+  virtual ~LineList() override = default;
 
   LineList & operator = (const LineList & ) = default;
   LineList & operator = (      LineList &&) = default;
