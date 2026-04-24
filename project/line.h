@@ -171,7 +171,7 @@ public:
     tr    = bbox.top_right();
     for (double x = bl.x; x < tr.x; x += 1.0) {
       for (double y = bl.y; y < tr.y; y += 1.0) {
-        if (pointToSegmentDistance(x+05, y+0.5, from.x, from.y, to.x, to.y) < half_w) {
+        if (pointToSegmentDistance(x+0.5, y+0.5, from.x, from.y, to.x, to.y) < half_w) {
           canvas(x,y) = color;
         }
       }
