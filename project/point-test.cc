@@ -12,12 +12,12 @@ int main() {
   Canvas             canvas(800, 600, RGB::white);
   BoundingBox        bbox;
   std::vector<Point> points;
-//  std::mt19937       rng(std::random_device{}());
-//  std::uniform_real_distribution<double> dx;
+  std::mt19937       rng(std::random_device{}());
+  std::uniform_real_distribution<double> d(0, 1000);
 
   for (int i = 0; i < 300; ++i) {
-    double x = i; //dx(rng);
-    double y = i; //dx(rng);
+    double x = d(rng);
+    double y = d(rng);
     Point p({x,y}, RGB::red);
     points.push_back(p);
     bbox += p.boundingBox();
