@@ -24,7 +24,7 @@ void grow(const Line & line, int depth) {
   Transformation s1 = Transformation::scale(third);
 
   // First line segment:
-  line1 = s1 * t1 * line;
+  auto line1 = s1 * t1 * line;
 
   // Translate by third of the original segment length:
   Transformation t3 = Transformation::translate((line.to-line.from)*third);
@@ -32,17 +32,17 @@ void grow(const Line & line, int depth) {
   // Rotate 60 degrees anti-clockwise:
   Transformation r1 = Transformation::rotate(60*DEG);
 
-  line2 = t3 * r1 * s1 * t1 * line;
+  auto line2 = t3 * r1 * s1 * t1 * line;
 
   // Rotate 60 degrees clockwise:
   Transformation r2 = Transformation::rotate(-60*DEG);
   // Translate:
   Transformation t4 = Transformation::translate(line2.to);
 
-  line3 = t4 * r2 * s1 * t1 * line;
+  auto line3 = t4 * r2 * s1 * t1 * line;
 
-  Transformation t5 = Transformation::translate(lin3.to);
-  line4 = t5 * s1 * t1 * line;
+  Transformation t5 = Transformation::translate(line3.to);
+  auto line4 = t5 * s1 * t1 * line;
 
   grow(t2*line1, depth-1);
   grow(t2*line2, depth-1);
@@ -51,7 +51,7 @@ void grow(const Line & line, int depth) {
 }
 
 int main() {
-  grow(Line({0,0}, {0,1}, RGB::black, 2));
+  grow(Line({0,0}, {0,1}, RGB::black, 2), 3);
   auto bbox        = koch.boundingBox() * 1.05;
   auto screen_size = bbox.screenSize(1000000);
   Canvas canvas(screen_size.width, screen_size.height, RGB::white);
