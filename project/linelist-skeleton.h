@@ -20,11 +20,6 @@ class LineList : public Drawable, public std::vector<Line> {
 
 public:
 
-  typedef std::vector<Line>::value_type value_type;
-  typedef std::vector<Line>::size_type  size_type;
-
-public:
-
   /** @brief Default constructor. Creates an empty list. */
   LineList() = default;
 
@@ -86,14 +81,14 @@ public:
   }
 };
 
-LineList operator + (const LineList & ll1, const LineList & ll2) {
+inline LineList operator + (const LineList & ll1, const LineList & ll2) {
   return LineList(ll1) += ll2;
 }
 
-LineList operator + (const LineList & ll, const Line & l) {
+inline LineList operator + (const LineList & ll, const Line & l) {
   return LineList(ll) += l;
 }
 
-LineList operator + (const Line & l, const LineList & ll) {
+inline LineList operator + (const Line & l, const LineList & ll) {
   return LineList(ll) += l;
 }
